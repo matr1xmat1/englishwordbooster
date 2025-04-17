@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Daily English Word Booster</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #f7f9fb;
+        --primary: #2d3142;
+        --accent: #3f72af;
+        --card-bg: #ffffff;
+        --shadow: rgba(0, 0, 0, 0.1);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: "Inter", sans-serif;
+      }
+
+      body {
+        background-color: var(--bg);
+        color: var(--primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        background-color: var(--card-bg);
+        padding: 30px;
+        border-radius: 16px;
+        box-shadow: 0 4px 12px var(--shadow);
+        max-width: 500px;
+        width: 100%;
+        text-align: center;
+      }
+
+      .word {
+        font-size: 2rem;
+        font-weight: 600;
+        color: var(--accent);
+        margin-bottom: 10px;
+      }
+
+      .meaning,
+      .example,
+      .translation {
+        font-size: 1rem;
+        margin: 10px 0;
+        line-height: 1.5;
+      }
+
+      button {
+        margin-top: 20px;
+        padding: 12px 24px;
+        background-color: var(--accent);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      button:hover {
+        background-color: #2e5c99;
+      }
+
+      @media (max-width: 600px) {
+        .container {
+          padding: 20px;
+        }
+
+        .word {
+          font-size: 1.5rem;
+        }
+
+        .meaning,
+        .example,
+        .translation {
+          font-size: 0.95rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="word" id="word">Loading...</div>
+      <div class="meaning" id="meaning">Meaning goes here</div>
+      <div class="example" id="example">Example goes here</div>
+      <div class="translation" id="translation">Bangla translation</div>
+      <button id="next-word">Show Another Word</button>
+    </div>
+
+    <script>
+      // script.js
+
+      const wordEl = document.getElementById("word");
+      const meaningEl = document.getElementById("meaning");
+      const exampleEl = document.getElementById("example");
+      const translationEl = document.getElementById("translation");
+      const button = document.getElementById("next-word");
+
+      async function loadWord() {
+        wordEl.textContent = "Loading...";
+        meaningEl.textContent = "";
+        exampleEl.textContent = "";
+        translationEl.textContent = "";
+
+        try {
+          const response = await fetch("http://localhost:3000/api/word");
+          const data = await response.json();
+
+          if (data.error) throw new Error(data.error);
+
+          wordEl.textContent = data.word;
+          meaningEl.textContent = `Meaning: ${data.definition}`;
+          exampleEl.textContent = `Example: ${data.example}`;
+          translationEl.textContent = `Bangla: ${data.translation}`;
+        } catch (err) {
+          wordEl.textContent = "Error";
+          meaningEl.textContent = err.message;
+        }
+      }
+
+      // Load one on start
+      loadWord();
+
+      // Button to show another
+      button.addEventListener("click", loadWord);
+    </script>
+  </body>
+</html>
